@@ -10,7 +10,10 @@
     "type": "git",
     "url": "?.git"
   },
-
-  "author": “Michael Weinberg“,
-  "license": "ISC"
+  "author": "Michael Weinberg",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-util": "^3.0.4"
+  }
 }
