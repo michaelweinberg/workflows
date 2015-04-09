@@ -7,6 +7,9 @@ var gulp = require('gulp'),
 	gulpif = require('gulp-if'),
 	uglify = require('gulp-uglify'),
 	minifyHTML = require('gulp-minify-html'),
+	minifyJSON = require('gulp-jsonminify'),
+	imageMin = require('gulp-imagemin'),
+	pngCrush = require('imagemin-pngcrush'),
 	concat = require('gulp-concat');
 	
 var env, 
@@ -29,7 +32,7 @@ if (env==='development'){
 }else{
 	outputDir = 'builds/production/';
 	sassStyle = 'compressed';
-	console.log('in production');
+	console.log(sassStyle);
 }
 
 coffeeSources = ['components/coffee/*.coffee'];
@@ -71,14 +74,16 @@ gulp.task('compass', function(){
 	.pipe(connect.reload())
 });
 
-gulp.task('default', ['html','coffee', 'js', 'compass', 'connect', 'watch','json']);
+
 
 gulp.task('watch', function(){
 	gulp.watch(coffeeSources, ['coffee']);
 	gulp.watch(jsSources, ['js']);
 	gulp.watch('components/sass/*.scss', ['compass']);
 	gulp.watch('builds/development/*.html', ['html']);
-	gulp.watch(jsonSources, ['json']);
+	gulp.watch('builds/development/js/*.json', ['json']);
+	gulp.watch('builds/development/images/**/*.*', ['images']);
+	
 });
 
 gulp.task('connect', function(){
@@ -95,7 +100,23 @@ gulp.task('html', function(){
 	.pipe(connect.reload())
 });
 
-gulp.task('json', function(){
-	gulp.src(jsonSources)
+gulp.task('images', function(){
+	gulp.src('builds/development/images/**/*.*')
+	.pipe(gulpif(env==='production', imageMin({
+		progressive:true,
+		svgoPlugins:[{removeViewBox:false}],
+		use:[pngCrush()]
+	})))
+	.pipe(gulpif(env==='production', gulp.dest(outputDir+'images')))
 	.pipe(connect.reload())
 });
+
+gulp.task('json', function(){
+	gulp.src('builds/development/js/*.json')
+	.pipe(gulpif(env==='production', minifyJSON()))
+	.pipe(gulpif(env==='production', gulp.dest('builds/production/js')))
+	.pipe(connect.reload())
+});
+
+
+gulp.task('default', ['html','json','coffee', 'js', 'compass', 'images', 'connect', 'watch']);
