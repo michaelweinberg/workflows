@@ -35,6 +35,9 @@ var rclick = function() {
     }, false); // click event
   }
 }(); //anonymous closure
+
+
+
 var pixgrid = function() {
     function centerImage(theImage) {
         var myDifX = (window.innerWidth - theImage.width) / 2, myDifY = (window.innerHeight - theImage.height) / 2;
@@ -91,6 +94,8 @@ $(function() {
   }); //getJSON
   
 }); //function
+
+
 },{"jquery":2,"mustache":3}],2:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.3
